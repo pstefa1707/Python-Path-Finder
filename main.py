@@ -5,8 +5,8 @@ from lib import Cell
 from math import floor
 
 #CUSTOMISABLE GLOBALS
-WIDTH = 1500
-HEIGHT = 900
+WIDTH = 800
+HEIGHT = 600
 colours = {'black': (0 ,0, 0), 'white': (255, 255, 255), 'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255), 'orange': (255, 165, 0)}
 DIAGONALS = True
 GRID_SIZE = (30, 30)
