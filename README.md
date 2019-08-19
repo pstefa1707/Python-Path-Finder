@@ -5,6 +5,9 @@ A* Path finder written in python
 `python 3+`
 `pip install pygame`
 
+## How to run
+Open main.py
+
 ## Usage
 Place wall: `W`
 
