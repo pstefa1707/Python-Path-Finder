@@ -9,7 +9,7 @@ WIDTH = 800
 HEIGHT = 600
 FULL_SCREEN = False
 colours = {'black': (0 ,0, 0), 'white': (255, 255, 255), 'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255), 'orange': (255, 165, 0)}
-DIAGONALS = False
+DIAGONALS = True
 GRID_SIZE = (60, 40)
 
 #Initialise grid
