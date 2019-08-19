@@ -95,7 +95,7 @@ def setup():
                 w_is_down = True
             if event.key == K_r:
                 r_is_down = True
-            if event.key == K_SPACE and START != None and END != None:
+            if event.key == K_SPACE and len(OPEN) == 0:
                 START.f = 0
                 OPEN = [START]
                 EXECUTING = True
