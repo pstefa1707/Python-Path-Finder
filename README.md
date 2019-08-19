@@ -16,3 +16,8 @@ Remove wall: `R`
 Set start positon: `S`
 
 Set end positon: `E`
+
+Start simulation: `SPACE`
+
+## Example
+![Path Finder](https://i.ibb.co/WznDspw/download.png)
