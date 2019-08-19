@@ -7,14 +7,18 @@ from math import floor
 #CUSTOMISABLE GLOBALS
 WIDTH = 800
 HEIGHT = 600
+FULL_SCREEN = False
 colours = {'black': (0 ,0, 0), 'white': (255, 255, 255), 'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255), 'orange': (255, 165, 0)}
-DIAGONALS = True
-GRID_SIZE = (30, 30)
+DIAGONALS = False
+GRID_SIZE = (60, 40)
 
 #Initialise grid
 pygame.init()
 pygame.display.set_caption("A* Path Finder by Pstefa")
-SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+if FULL_SCREEN:
+    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
+else:
+    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 RUNNING = True
 EXECUTING = False
 CLOCK = pygame.time.Clock()
