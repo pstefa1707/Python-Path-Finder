@@ -26,4 +26,4 @@ Toggle Diagonals: `D`
 Toggle Grid Lines: `G`
 
 ## Example
-![Path Finder](https://i.ibb.co/WznDspw/download.png)
+![Path Finder](https://i.gyazo.com/438b54250cefd492ab93eadfb00788db.png)
