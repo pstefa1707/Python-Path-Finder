@@ -6,7 +6,7 @@ A* Path finder written in python, uses Octile Heuristic to calculate f Values
 `pip install pygame`
 
 ## How to run
-Open main.py
+Open main.py OR Download Release V1 and open Standalone Executable
 
 ## Usage
 Place wall: `W`
