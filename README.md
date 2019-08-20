@@ -17,7 +17,13 @@ Set start positon: `S`
 
 Set end positon: `E`
 
-Start simulation: `SPACE`
+Start/Cancel simulation: `SPACE`
+
+Clear Walls: `C`
+
+Toggle Diagonals: `D`
+
+Toggle Grid Lines: `G`
 
 ## Example
 ![Path Finder](https://i.ibb.co/WznDspw/download.png)
