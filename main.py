@@ -8,21 +8,22 @@ from math import floor
 WIDTH = 800
 HEIGHT = 600
 FULL_SCREEN = False
-colours = {'black': (0 ,0, 0), 'white': (255, 255, 255), 'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255), 'orange': (255, 165, 0)}
+DRAW_GRID = False
+colours = {'black': (0 ,0, 0), 'white': (255, 255, 255), 'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255), 'orange': (255, 165, 0), 'True': (0, 130, 0), 'False': (130, 0, 0)}
 DIAGONALS = True
 GRID_SIZE = (60, 40)
 
-#Initialise grid
+#Initialise Pygame and alogrithm
 pygame.init()
 pygame.display.set_caption("A* Path Finder by Pstefa")
 if FULL_SCREEN:
     SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
 else:
     SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+FONT = pygame.font.SysFont("arial", 12)
 RUNNING = True
 EXECUTING = False
-CLOCK = pygame.time.Clock()
-CELL_SIZE = (WIDTH/GRID_SIZE[0], HEIGHT/GRID_SIZE[1])
+CELL_SIZE = (WIDTH/GRID_SIZE[0], (HEIGHT-25)/GRID_SIZE[1])
 START = Cell.Cell(0, 0)
 END = Cell.Cell(GRID_SIZE[0] - 1, GRID_SIZE[1] - 1)
 WALLS = []
@@ -70,25 +71,30 @@ def reset():
     OPEN = []
     CLOSED = []
     SOLUTION = []
-    WALLS = []
     START = Cell.Cell(0, 0)
     END = Cell.Cell(GRID_SIZE[0] - 1, GRID_SIZE[1] - 1)
 
 def setup():
-    global w_is_down, r_is_down, RUNNING, EXECUTING, START, OPEN
+    global w_is_down, r_is_down, RUNNING, EXECUTING, START, OPEN, DRAW_GRID, DIAGONALS, WALLS
     for event in pygame.event.get():
         if event.type == KEYUP:
-            if len(SOLUTION) != 0:
-                reset()
             if event.key == K_w:
                 w_is_down = False
             elif event.key == K_r:
                 r_is_down = False
-            elif event.key == K_s:
+            elif event.key == K_s and pygame.mouse.get_pos()[1] < HEIGHT-25:
                 set_start(pygame.mouse.get_pos())
-            elif event.key == K_e:
+            elif event.key == K_e and pygame.mouse.get_pos()[1] < HEIGHT-25:
                 set_end(pygame.mouse.get_pos())
+            elif event.key == K_g:
+                DRAW_GRID = not DRAW_GRID
+            elif event.key == K_d:
+                DIAGONALS = not DIAGONALS
+            elif event.key == K_c:
+                WALLS = []
         elif event.type == KEYDOWN:
+            if len(SOLUTION) != 0:
+                reset()
             if event.key == K_ESCAPE:
                 RUNNING = False
             if event.key == K_w:
@@ -102,37 +108,49 @@ def setup():
         elif event.type == QUIT:
             RUNNING = False
     
-    if w_is_down:
+    if w_is_down and pygame.mouse.get_pos()[1] < HEIGHT-25:
         set_wall(pygame.mouse.get_pos())
-    if r_is_down:
+    if r_is_down and pygame.mouse.get_pos()[1] < HEIGHT-25:
         remove_wall(pygame.mouse.get_pos())
+
+def render_text():
+    diagonals = FONT.render(f"Diagonals: {DIAGONALS}", True, colours[f'{DIAGONALS}'])
+    draw_grid = FONT.render(f"Draw Grid: {DRAW_GRID}", True, colours[f'{DRAW_GRID}'])
+    SCREEN.blit(diagonals, (0, HEIGHT - diagonals.get_height()))
+    pygame.draw.line(SCREEN, colours['black'], (diagonals.get_width() + 3, HEIGHT-20), (diagonals.get_width()+3, HEIGHT))
+    SCREEN.blit(draw_grid, (diagonals.get_width() + 6, HEIGHT - draw_grid.get_height()))
+    controls = FONT.render("Toggle Diagonals: D, Toggle Grid: G, Remove Wall: R, Place Wall: W, Set Start: S, Set End: E, Clear: C, Start/Cancel Search: SPACE", True, colours['black'])
+    lineX = diagonals.get_width() + draw_grid.get_width() + 10
+    pygame.draw.line(SCREEN, colours["black"], (lineX, HEIGHT-20), (lineX, HEIGHT))
+    SCREEN.blit(controls, (lineX + 5, HEIGHT - diagonals.get_height()))
 
 def render_cells():
     SCREEN.fill((255, 255, 255))
     #Render cells
+    CELLx = CELL_SIZE[0] + 1
+    CELLy = CELL_SIZE[1] + 1
     for wall in WALLS:
-        cell = pygame.Rect((wall.x*CELL_SIZE[0], wall.y*CELL_SIZE[1]), (CELL_SIZE[0], CELL_SIZE[1]))            
+        cell = pygame.Rect((wall.x*CELL_SIZE[0], wall.y*CELL_SIZE[1]), (CELLx, CELLy))            
         pygame.draw.rect(SCREEN, colours['black'], cell)
     for cell in OPEN:
-        CELL = pygame.Rect((cell.x*CELL_SIZE[0], cell.y*CELL_SIZE[1]), (CELL_SIZE[0], CELL_SIZE[1]))
+        CELL = pygame.Rect((cell.x*CELL_SIZE[0], cell.y*CELL_SIZE[1]), (CELLx, CELLy))
         pygame.draw.rect(SCREEN, colours['green'], CELL)
     for cell in CLOSED:
-        CELL = pygame.Rect((cell.x*CELL_SIZE[0], cell.y*CELL_SIZE[1]), (CELL_SIZE[0], CELL_SIZE[1]))
+        CELL = pygame.Rect((cell.x*CELL_SIZE[0], cell.y*CELL_SIZE[1]), (CELLx, CELLy))
         pygame.draw.rect(SCREEN, colours['red'], CELL)
     for cell in SOLUTION:
-        CELL = pygame.Rect((cell.x*CELL_SIZE[0], cell.y*CELL_SIZE[1]), (CELL_SIZE[0], CELL_SIZE[1]))
+        CELL = pygame.Rect((cell.x*CELL_SIZE[0], cell.y*CELL_SIZE[1]), (CELLx, CELLy))
         pygame.draw.rect(SCREEN, colours['orange'], CELL)
-    start = pygame.Rect((START.x*CELL_SIZE[0], START.y*CELL_SIZE[1]), (CELL_SIZE[0], CELL_SIZE[1]))
-    end = pygame.Rect((END.x*CELL_SIZE[0], END.y*CELL_SIZE[1]), (CELL_SIZE[0], CELL_SIZE[1]))
+    start = pygame.Rect((START.x*CELL_SIZE[0], START.y*CELL_SIZE[1]), (CELLx, CELLy))
+    end = pygame.Rect((END.x*CELL_SIZE[0], END.y*CELL_SIZE[1]), (CELLx, CELLy))
     pygame.draw.rect(SCREEN, colours['blue'], start)
     pygame.draw.rect(SCREEN, colours['red'], end)        
 
-    for i in range(GRID_SIZE[0]):
-        pygame.draw.line(SCREEN, colours['black'], (i * CELL_SIZE[0], 0), (i * CELL_SIZE[0], HEIGHT))
-    for j in range(GRID_SIZE[1]):
-        pygame.draw.line(SCREEN, colours['black'], (0, j * CELL_SIZE[1]), (WIDTH, j * CELL_SIZE[1]))
-
-    pygame.display.flip()
+    if DRAW_GRID:
+        for i in range(GRID_SIZE[0]):
+            pygame.draw.line(SCREEN, colours['black'], (i * CELL_SIZE[0], 0), (i * CELL_SIZE[0], HEIGHT-25))
+        for j in range(GRID_SIZE[1] + 1):
+            pygame.draw.line(SCREEN, colours['black'], (0, j * CELL_SIZE[1]), (WIDTH, j * CELL_SIZE[1]))
 
 def return_f(node):
     return node.f
@@ -184,6 +202,11 @@ def execute():
     for event in pygame.event.get():
         if event.type == QUIT:
             RUNNING = False
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                print("Path finding canceled, resetting.")
+                EXECUTING = False
+                reset()
     if len(OPEN) == 0:
         print("No solution, Press any key to reset!")
         EXECUTING = False
@@ -217,4 +240,5 @@ while RUNNING:
     else:
         execute()
     render_cells()
-    CLOCK.tick(144)
+    render_text()
+    pygame.display.flip()
