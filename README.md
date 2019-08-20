@@ -1,5 +1,5 @@
 # Python-Path-Finder
-A* Path finder written in python
+A* Path finder written in python, uses Octile Heuristic to calculate f Values
 
 ## Dependencies
 `python 3+`
